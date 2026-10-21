@@ -5,7 +5,8 @@ From: rocker/r-ver:4.5.3
     Version      1.0.0
     R.version    4.5.3
     GenomicSEM   0.0.5 (GitHub commit 123ec96517b67330d7b7933b9f3834a9cf55cde0)
-    Description  R 4.5.3 with GenomicSEM 0.0.5, lavaan, psych, GPArotation, data.table, Matrix, gdata
+    lavaan       0.6-21 (pinned; GenomicSEM 0.0.5 fails with lavaan 0.7.x)
+    Description  R 4.5.3 with GenomicSEM 0.0.5, lavaan 0.6-21, psych, GPArotation, data.table, Matrix, gdata
 
 %post
     # ── System dependencies ────────────────────────────────────────────────
@@ -25,9 +26,13 @@ From: rocker/r-ver:4.5.3
     export CRAN_SNAPSHOT="https://packagemanager.posit.co/cran/__linux__/${CODENAME}/2026-10-15"
     Rscript -e "
       options(repos = c(CRAN = Sys.getenv('CRAN_SNAPSHOT')))
-      install.packages(c('remotes', 'data.table', 'Matrix', 'lavaan', 'psych',
+      install.packages(c('remotes', 'data.table', 'Matrix', 'psych',
                          'GPArotation', 'gdata'),
                        Ncpus = parallel::detectCores())
+      # lavaan pinned: GenomicSEM 0.0.5 (123ec96) fails with lavaan 0.7.x
+      # (usermodel(): object 'ReorderModel' not found)
+      remotes::install_version('lavaan', version = '0.6-21', upgrade = 'never',
+                               repos = 'https://packagemanager.posit.co/cran/2026-10-15')
       # Pinned commit: code that patches or reproduces GenomicSEM internals
       # (e.g. ldsc(), usermodel()) is validated against this exact version
       remotes::install_github('GenomicSEM/GenomicSEM@123ec96517b67330d7b7933b9f3834a9cf55cde0',
@@ -39,7 +44,7 @@ From: rocker/r-ver:4.5.3
       pkgs <- c('GenomicSEM', 'lavaan', 'psych', 'GPArotation', 'data.table', 'Matrix', 'gdata')
       ok   <- sapply(pkgs, requireNamespace, quietly = TRUE)
       if (!all(ok)) stop('Missing packages: ', paste(pkgs[!ok], collapse = ', '))
-      stopifnot(packageVersion('GenomicSEM') == '0.0.5')
+      stopifnot(packageVersion('GenomicSEM') == '0.0.5', packageVersion('lavaan') == '0.6.21')
       for (p in pkgs) cat(p, as.character(packageVersion(p)), '\n')
       cat(R.version.string, '\n')
     "

@@ -10,12 +10,18 @@ access, such as TSD.
 | Package | Version source |
 |---|---|
 | `GenomicSEM` | GitHub, pinned commit |
-| `lavaan`, `psych`, `GPArotation`, `data.table`, `Matrix`, `gdata` | CRAN, Posit Package Manager snapshot of 2026-10-15 |
+| `lavaan` | CRAN, pinned to 0.6-21 |
+| `psych`, `GPArotation`, `data.table`, `Matrix`, `gdata` | CRAN, Posit Package Manager snapshot of 2026-10-15 |
 
 All dependencies are included. GenomicSEM is pinned to a commit, not a branch,
 because code that patches or reproduces GenomicSEM internals (for example
 `ldsc()` or `usermodel()`) is only valid for the version it was checked
 against.
+
+**lavaan is pinned to 0.6-21** because GenomicSEM 0.0.5 (this commit) fails
+with lavaan 0.7.x: `usermodel()` stops with `object 'ReorderModel' not found`
+(its first `sem()` call errors inside a `tryCatch`). Found by this repo's first
+build, 2026-10-21.
 
 ---
 
