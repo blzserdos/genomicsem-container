@@ -2,11 +2,11 @@ Bootstrap: docker
 From: rocker/r-ver:4.5.3
 
 %labels
-    Version      1.0.0
+    Version      1.1.0
     R.version    4.5.3
-    GenomicSEM   0.0.5 (GitHub commit 123ec96517b67330d7b7933b9f3834a9cf55cde0)
-    lavaan       0.6-21 (pinned; GenomicSEM 0.0.5 fails with lavaan 0.7.x)
-    Description  R 4.5.3 with GenomicSEM 0.0.5, lavaan 0.6-21, psych, GPArotation, data.table, Matrix, gdata
+    GenomicSEM   0.0.5 (GitHub commit da95d431a4709693d07eae55e172ade55526948b)
+    lavaan       0.7-3 (pinned)
+    Description  R 4.5.3 with GenomicSEM 0.0.5, lavaan 0.7-3, psych, GPArotation, data.table, Matrix, gdata
 
 %post
     # ── System dependencies ────────────────────────────────────────────────
@@ -29,13 +29,13 @@ From: rocker/r-ver:4.5.3
       install.packages(c('remotes', 'data.table', 'Matrix', 'psych',
                          'GPArotation', 'gdata'),
                        Ncpus = parallel::detectCores())
-      # lavaan pinned: GenomicSEM 0.0.5 (123ec96) fails with lavaan 0.7.x
-      # (usermodel(): object 'ReorderModel' not found)
-      remotes::install_version('lavaan', version = '0.6-21', upgrade = 'never',
+      # lavaan pinned explicitly. GenomicSEM needs commit bba1042 (2026-09-28)
+      # or later to work with lavaan 0.7.x (ordered = FALSE in its DWLS calls)
+      remotes::install_version('lavaan', version = '0.7-3', upgrade = 'never',
                                repos = 'https://packagemanager.posit.co/cran/2026-10-15')
       # Pinned commit: code that patches or reproduces GenomicSEM internals
       # (e.g. ldsc(), usermodel()) is validated against this exact version
-      remotes::install_github('GenomicSEM/GenomicSEM@123ec96517b67330d7b7933b9f3834a9cf55cde0',
+      remotes::install_github('GenomicSEM/GenomicSEM@da95d431a4709693d07eae55e172ade55526948b',
                               upgrade = 'never', Ncpus = parallel::detectCores())
     "
 
@@ -44,7 +44,7 @@ From: rocker/r-ver:4.5.3
       pkgs <- c('GenomicSEM', 'lavaan', 'psych', 'GPArotation', 'data.table', 'Matrix', 'gdata')
       ok   <- sapply(pkgs, requireNamespace, quietly = TRUE)
       if (!all(ok)) stop('Missing packages: ', paste(pkgs[!ok], collapse = ', '))
-      stopifnot(packageVersion('GenomicSEM') == '0.0.5', packageVersion('lavaan') == '0.6.21')
+      stopifnot(packageVersion('GenomicSEM') == '0.0.5', packageVersion('lavaan') == '0.7.3')
       for (p in pkgs) cat(p, as.character(packageVersion(p)), '\n')
       cat(R.version.string, '\n')
     "
@@ -57,8 +57,8 @@ From: rocker/r-ver:4.5.3
     exec Rscript "$@"
 
 %help
-    R 4.5.3 with GenomicSEM 0.0.5 (GitHub commit 123ec96), lavaan, psych,
-    GPArotation, data.table, Matrix and gdata.
+    R 4.5.3 with GenomicSEM 0.0.5 (GitHub commit da95d43), lavaan 0.7-3,
+    psych, GPArotation, data.table, Matrix and gdata.
 
     Usage (bind the directories your scripts and data live in):
       apptainer run --bind /path/to/project genomicsem.sif my_script.R

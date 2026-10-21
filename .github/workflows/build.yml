@@ -41,7 +41,7 @@ jobs:
           name: "GenomicSEM 0.0.5 container – ${{ steps.sha.outputs.short }}"
           body: |
             Apptainer .sif image built from `genomicsem.def`.
-            **Includes:** GenomicSEM 0.0.5 (commit 123ec96) · lavaan 0.6-21 (pinned) · psych · GPArotation · data.table · Matrix · gdata (+ dependencies)
+            **Includes:** GenomicSEM 0.0.5 (commit da95d43) · lavaan 0.7-3 (pinned) · psych · GPArotation · data.table · Matrix · gdata (+ dependencies)
             **R version:** 4.5.3 · CRAN packages from the Posit Package Manager snapshot of 2026-10-15
           files: genomicsem.sif
           make_latest: true

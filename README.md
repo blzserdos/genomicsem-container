@@ -3,14 +3,14 @@
 Apptainer/Singularity `.sif` container with **R 4.5.3** and
 [GenomicSEM](https://github.com/GenomicSEM/GenomicSEM) **0.0.5**, pinned to
 commit
-[`123ec96`](https://github.com/GenomicSEM/GenomicSEM/commit/123ec96517b67330d7b7933b9f3834a9cf55cde0)
-(3 April 2026), for running Genomic SEM on HPC systems without internet
+[`da95d43`](https://github.com/GenomicSEM/GenomicSEM/commit/da95d431a4709693d07eae55e172ade55526948b)
+(28 September 2026), for running Genomic SEM on HPC systems without internet
 access, such as TSD.
 
 | Package | Version source |
 |---|---|
 | `GenomicSEM` | GitHub, pinned commit |
-| `lavaan` | CRAN, pinned to 0.6-21 |
+| `lavaan` | CRAN, pinned to 0.7-3 |
 | `psych`, `GPArotation`, `data.table`, `Matrix`, `gdata` | CRAN, Posit Package Manager snapshot of 2026-10-15 |
 
 All dependencies are included. GenomicSEM is pinned to a commit, not a branch,
@@ -18,10 +18,12 @@ because code that patches or reproduces GenomicSEM internals (for example
 `ldsc()` or `usermodel()`) is only valid for the version it was checked
 against.
 
-**lavaan is pinned to 0.6-21** because GenomicSEM 0.0.5 (this commit) fails
-with lavaan 0.7.x: `usermodel()` stops with `object 'ReorderModel' not found`
-(its first `sem()` call errors inside a `tryCatch`). Found by this repo's first
-build, 2026-10-21.
+**GenomicSEM and lavaan 0.7.** lavaan 0.7 refuses `estimator = "DWLS"` on
+continuous data unless `ordered = FALSE` is set. GenomicSEM added that argument
+in commit `bba1042` (2026-09-28). Older commits fail with lavaan 0.7.x:
+`usermodel()` stops with `object 'ReorderModel' not found`. Image 1.0.0 (release
+`build-a867e8b`) has the older pair, GenomicSEM `123ec96` with lavaan 0.6-21.
+On a 13-disorder Genomic SEM model the two images agree to within about 10⁻⁶.
 
 ---
 

@@ -17,8 +17,8 @@ stopifnot(all(sapply(pkgs, requireNamespace, quietly = TRUE)))
 ## 1. Versions -----------------------------------------------------------------
 d <- packageDescription("GenomicSEM")
 stopifnot(d$Version == "0.0.5",
-          identical(d$RemoteSha, "123ec96517b67330d7b7933b9f3834a9cf55cde0"),
-          packageVersion("lavaan") == "0.6.21")
+          identical(d$RemoteSha, "da95d431a4709693d07eae55e172ade55526948b"),
+          packageVersion("lavaan") == "0.7.3")
 cat("1. GenomicSEM", d$Version, "commit", substr(d$RemoteSha, 1, 7),
     "; lavaan", as.character(packageVersion("lavaan")), "\n")
 
