@@ -1,0 +1,47 @@
+name: Build GenomicSEM Apptainer container
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "genomicsem.def"
+      - "smoke_test.R"
+      - ".github/workflows/build.yml"
+  workflow_dispatch:          # allow manual trigger from the Actions tab
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write         # needed to create a GitHub Release
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Apptainer
+        uses: eWaterCycle/setup-apptainer@v2
+
+      - name: Build .sif
+        run: |
+          sudo apptainer build genomicsem.sif genomicsem.def
+
+      - name: Smoke-test the container
+        run: |
+          apptainer exec genomicsem.sif Rscript smoke_test.R
+
+      - name: Get short SHA for tag
+        id: sha
+        run: echo "short=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release and upload .sif
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "build-${{ steps.sha.outputs.short }}"
+          name: "GenomicSEM 0.0.5 container – ${{ steps.sha.outputs.short }}"
+          body: |
+            Apptainer .sif image built from `genomicsem.def`.
+            **Includes:** GenomicSEM 0.0.5 (commit 123ec96) · lavaan · psych · GPArotation · data.table · Matrix · gdata (+ dependencies)
+            **R version:** 4.5.3 · CRAN packages from the Posit Package Manager snapshot of 2026-10-15
+          files: genomicsem.sif
+          make_latest: true
